@@ -3,7 +3,8 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     price: DataTypes.INTEGER,
     type: DataTypes.STRING,
-    status: DataTypes.STRING // <--- ต้องเพิ่มบรรทัดนี้ด้วยนะครับ
+    status: DataTypes.STRING,
+    image: DataTypes.STRING // <--- เพิ่มบรรทัดนี้
   })
   return Coffee
 }

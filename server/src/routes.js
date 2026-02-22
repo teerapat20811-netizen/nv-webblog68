@@ -5,7 +5,8 @@ const BlogController = require('./controllers/BlogController')
 const UploadController = require('./controllers/UploadController')
 const CoffeeController = require('./controllers/CoffeeController') 
 
-const fileUploadMiddleware = require('./middleware/fileUpload')
+// --- จุดที่แก้ไข: ลบบรรทัด fileUpload ที่เป็นต้นเหตุของ Error ออก ---
+const coffeeUpload = require('./middleware/coffeeUpload') // ใช้ไฟล์ที่มีอยู่จริง
 
 module.exports = (app) => {
   // User Management
@@ -24,15 +25,15 @@ module.exports = (app) => {
   app.get('/blog/:blogId', BlogController.show)
   app.get('/blogs', BlogController.index)
 
-  // Upload Management
-  app.post('/upload', fileUploadMiddleware, UploadController.upload)
+  // Upload Management (Lab 12)
+  // ใช้ coffeeUpload สำหรับทั้งการอัปโหลดทั่วไปและรูปกาแฟเพื่อให้ทำงานได้
+  app.post('/upload', coffeeUpload, UploadController.upload)
+  app.post('/coffee-upload', coffeeUpload, UploadController.upload) 
 
-  // Coffee Management (ร้านกาแฟ) 
-  // 1. ส่วนดูข้อมูล (GET) ปล่อยให้เป็นสาธารณะ (ไม่ต้องใส่ isAuthenController)
+  // Coffee Management (ร้านกาแฟ)
   app.get('/coffees', CoffeeController.index)
   app.get('/coffee/:coffeeId', CoffeeController.show)
 
-  // 2. ส่วนแก้ไขข้อมูล (POST, PUT, DELETE) ต้องใส่ isAuthenController ดักไว้ก่อน
   app.post('/coffee', isAuthenController, CoffeeController.post)
   app.put('/coffee/:coffeeId', isAuthenController, CoffeeController.put)
   app.delete('/coffee/:coffeeId', isAuthenController, CoffeeController.delete)

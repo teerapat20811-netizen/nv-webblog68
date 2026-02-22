@@ -19,7 +19,18 @@
 
     <div v-for="coffee in coffees" v-bind:key="coffee.id">
       <p>id: {{ coffee.id }}</p>
-      <p>ชื่อเมนู: {{ coffee.name }}</p>
+      
+      <p style="display: flex; align-items: center; gap: 10px;">
+        <img 
+          v-if="coffee.image" 
+          :src="'http://localhost:8081/public/uploads/' + coffee.image" 
+          alt="coffee image" 
+          style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid #ccc;"
+        >
+        <span v-else style="width: 50px; height: 50px; border-radius: 50%; background-color: #eee; display: inline-block; border: 1px solid #ccc;"></span>
+        <b>ชื่อเมนู: {{ coffee.name }}</b>
+      </p>
+      
       <p>ราคา: {{ coffee.price }}</p>
       <p>ประเภท: {{ coffee.type }}</p>
       <p>สถานะ: {{ coffee.status }}</p>
@@ -36,7 +47,7 @@
 
 <script>
 import CoffeesService from '../../services/CoffeesService'
-import { useAuthenStore } from '../../stores/authen' // 1. import store เข้ามา
+import { useAuthenStore } from '../../stores/authen'
 
 export default {
   data () {
@@ -44,7 +55,6 @@ export default {
       coffees: []
     }
   },
-  // 2. สร้าง computed property เพื่อเช็คสถานะ Login ตลอดเวลา
   computed: {
     isUserLoggedIn () {
       const authenStore = useAuthenStore()
@@ -52,7 +62,6 @@ export default {
     }
   },
   async created () {
-    // ดึงข้อมูลกาแฟ (Route นี้เป็น public ใครก็ดูได้)
     try {
       this.coffees = (await CoffeesService.index()).data
     } catch (error) {
@@ -60,12 +69,9 @@ export default {
     }
   },
   methods: {
-    // 3. เพิ่ม method logout
     logout () {
       const authenStore = useAuthenStore()
       authenStore.logout()
-      // เมื่อ logout เสร็จจะรีเฟรชหน้าเดิม หรือเปลี่ยนหน้าก็ได้
-      // ในที่นี้ถ้าอยู่หน้าเดิม ปุ่มต่างๆ จะหายไปเองเพราะ v-if
       this.$router.push({ name: 'login' }) 
     },
     navigateTo (route) {
@@ -79,7 +85,6 @@ export default {
           this.refreshData()
         } catch (err) {
           console.log(err)
-          // ถ้า Token หมดอายุ หรือไม่มีสิทธิ์ จะเข้า catch นี้
           if (err.response && err.response.status === 403) {
             alert("คุณไม่มีสิทธิ์ในการลบข้อมูลนี้ หรือ Session หมดอายุ")
             this.logout()
@@ -93,5 +98,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-</style>

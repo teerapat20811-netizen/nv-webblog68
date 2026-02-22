@@ -7,8 +7,11 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
-// กำหนดให้ folder 'public' เป็น static resource ที่เข้าถึงได้ผ่าน path '/assets'
-app.use('/assets', express.static('public'))
+
+// --- จุดที่แก้ไข: เปลี่ยนจาก '/assets' เป็น '/public' เพื่อให้ตรงกับ Path ใน Index.vue ---
+// สิ่งนี้จะทำให้เราเข้าถึงรูปภาพผ่าน http://localhost:8081/public/uploads/ชื่อไฟล์ ได้ครับ
+app.use('/public', express.static('public')) 
+// ----------------------------------------------------------------------------
 
 require('./userPassport')
 // --- Routes Section ---
